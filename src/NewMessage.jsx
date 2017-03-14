@@ -9,6 +9,7 @@ class NewMessage extends Component {
   submitMessage() {
     const formData = {text: document.getElementById('new-message-text').value};
     this.props.postMessage(formData);
+    document.getElementById('new-message-text').value = '';
   }
 
   render () {
