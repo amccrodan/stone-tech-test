@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import MessageList from "./MessageList.jsx";
+import MessageList from './MessageList.jsx';
 
 class App extends Component {
   constructor(props) {
@@ -17,15 +17,15 @@ class App extends Component {
       this.setState({messages: data.results}, () => {
         console.log(this.state.messages);
       })
-    }).catch(() => {
-      console.log('Error in getMessages!');
+    }).catch((error) => {
+      console.log(`Error in getMessages: ${error}`);
     })
   }
 
   render() {
     return (
       <div>
-        <MessageList />
+        <MessageList messages={this.state.messages}/>
       </div>
     );
   }
