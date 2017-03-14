@@ -12,17 +12,27 @@ class App extends Component {
       messages: []
     };
 
+    this.baseURL = 'https://andrew-mccrodan-test.herokuapp.com/messages/';
     this.getMessages = this.getMessages.bind(this);
+    this.postMessage = this.postMessage.bind(this);
     this.toggleModal = this.toggleModal.bind(this);
   }
 
-  getMessages() {
-    fetch('https://andrew-mccrodan-test.herokuapp.com/messages')
+  getMessages(url) {
+    fetch(url)
     .then((response) => {
       return response.json();
     }).then((data) => {
-      this.setState({messages: data.results}, () => {
-        console.log(this.state.messages);
+      let newMessages = [];
+      if (url !== this.baseURL) {
+        newMessages = this.state.messages.concat(data.results);
+      } else {
+        newMessages = data.results;
+      }
+      this.setState({messages: newMessages}, () => {
+        if (data.next) {
+          this.getMessages(data.next);
+        }
       })
     }).catch((error) => {
       console.log(`Error in getMessages: ${error}`);
@@ -30,44 +40,44 @@ class App extends Component {
   }
 
   postMessage(formData) {
-    const postOptions = {
-      method: 'POST',
-      body: JSON.stringify(formData)
-    }
+    const xhr = new XMLHttpRequest();
+    xhr.open('POST', 'https://andrew-mccrodan-test.herokuapp.com/messages/', true);
 
-    fetch('https://andrew-mccrodan-test.herokuapp.com/messages', postOptions)
-    .then((response) => {
-      console.log(response);
-    }).then((data) => {
-      console.log(data);
-    }).catch((error) => {
-      console.log(`Error in postMessage: ${error}`);
-    });
+    //Send the proper header information along with the request
+    xhr.setRequestHeader('Content-type', 'application/json');
+
+    xhr.onreadystatechange = () => {
+      if(xhr.readyState == XMLHttpRequest.DONE && xhr.status == 201) {
+        // Request finished. Do processing here.
+        this.getMessages(this.baseURL);
+      }
+    }
+    xhr.send(JSON.stringify(formData));
   }
 
   deleteMessage(id) {
-    console.log('Delete');
-    const deleteOptions = {
-      method: 'DELETE'
-    }
+    const xhr = new XMLHttpRequest();
+    xhr.open('DELETE', `https://andrew-mccrodan-test.herokuapp.com/messages/${id}`, true);
 
-    // fetch(`https://andrew-mccrodan-test.herokuapp.com/messages/${id}`, deleteOptions)
-    // .then((response) => {
-    //   console.log(response);
-    // }).then((data) => {
-    //   console.log(data);
-    // }).catch((error) => {
-    //   console.log(`Error in deleteMessage: ${error}`);
-    // });
+    //Send the proper header information along with the request
+    xhr.setRequestHeader('Content-type', 'application/json');
+
+    xhr.onreadystatechange = () => {
+      if(xhr.readyState == XMLHttpRequest.DONE && xhr.status == 201) {
+        // Request finished. Do processing here.
+        this.getMessages(this.baseURL);
+      }
+    }
+    xhr.send();
   }
 
   toggleModal(id) {
     const newState = (this.state.showModal === '') ? 'is-active' : '';
-    this.setState({showModal: newState, modalId: id}, () => {console.log(this.state.modalId);});
+    this.setState({showModal: newState, modalId: id});
   }
 
   componentDidMount() {
-    this.getMessages();
+    this.getMessages(this.baseURL);
   }
 
   render() {
