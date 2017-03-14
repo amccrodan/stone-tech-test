@@ -16,9 +16,7 @@ class MessageDetail extends Component {
     .then((response) => {
       return response.json();
     }).then((data) => {
-      this.setState({message: data}, () => {
-        console.log(this.state.message);
-      })
+      this.setState({message: data}, () => {})
     }).catch((error) => {
       console.log(`Error in getMessage: ${error}`);
     });
