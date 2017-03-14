@@ -15,6 +15,7 @@ class App extends Component {
     this.baseURL = 'https://andrew-mccrodan-test.herokuapp.com/messages/';
     this.getMessages = this.getMessages.bind(this);
     this.postMessage = this.postMessage.bind(this);
+    this.deleteMessage = this.deleteMessage.bind(this);
     this.toggleModal = this.toggleModal.bind(this);
   }
 
@@ -57,13 +58,13 @@ class App extends Component {
 
   deleteMessage(id) {
     const xhr = new XMLHttpRequest();
-    xhr.open('DELETE', `https://andrew-mccrodan-test.herokuapp.com/messages/${id}`, true);
+    xhr.open('DELETE', `https://andrew-mccrodan-test.herokuapp.com/messages/${id}/`, true);
 
     //Send the proper header information along with the request
     xhr.setRequestHeader('Content-type', 'application/json');
 
     xhr.onreadystatechange = () => {
-      if(xhr.readyState == XMLHttpRequest.DONE && xhr.status == 201) {
+      if(xhr.readyState == XMLHttpRequest.DONE && xhr.status == 204) {
         // Request finished. Do processing here.
         this.getMessages(this.baseURL);
       }
