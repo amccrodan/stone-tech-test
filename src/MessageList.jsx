@@ -5,13 +5,18 @@ class MessageList extends Component {
   constructor(props) {
     super(props);
   }
-  
+
   render () {
 
     const messages = this.props.messages;
     const messageArray = messages.map((message) => {
       return (
-        <Message key={message.id} message={message} />
+        <Message
+          key={message.id}
+          message={message}
+          toggleModal={this.props.toggleModal}
+          deleteMessage={this.props.deleteMessage}
+        />
       )
     })
 
