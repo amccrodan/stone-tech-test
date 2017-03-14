@@ -41,35 +41,32 @@ class App extends Component {
   }
 
   postMessage(formData) {
-    const xhr = new XMLHttpRequest();
-    xhr.open('POST', 'https://andrew-mccrodan-test.herokuapp.com/messages/', true);
+    const myHeaders = new Headers();
+    myHeaders.append('Content-type', 'application/json');
 
-    //Send the proper header information along with the request
-    xhr.setRequestHeader('Content-type', 'application/json');
-
-    xhr.onreadystatechange = () => {
-      if(xhr.readyState == XMLHttpRequest.DONE && xhr.status == 201) {
-        // Request finished. Do processing here.
-        this.getMessages(this.baseURL);
-      }
-    }
-    xhr.send(JSON.stringify(formData));
+    fetch(this.baseURL, {
+      method: 'POST',
+      headers: myHeaders,
+      body: JSON.stringify(formData)
+    })
+    .then((response) => {
+      return response.json();
+    }).then((data) => {
+      console.log(data);
+      this.getMessages(this.baseURL);
+    }).catch((error) => {
+      console.log(`Error in postMessage: ${error}`);
+    });
   }
 
   deleteMessage(id) {
-    const xhr = new XMLHttpRequest();
-    xhr.open('DELETE', `https://andrew-mccrodan-test.herokuapp.com/messages/${id}/`, true);
-
-    //Send the proper header information along with the request
-    xhr.setRequestHeader('Content-type', 'application/json');
-
-    xhr.onreadystatechange = () => {
-      if(xhr.readyState == XMLHttpRequest.DONE && xhr.status == 204) {
-        // Request finished. Do processing here.
-        this.getMessages(this.baseURL);
-      }
-    }
-    xhr.send();
+    fetch(`${this.baseURL}${id}/`, {
+      method: 'DELETE'
+    }).then(() => {
+      this.getMessages(this.baseURL);
+    }).catch((error) => {
+      console.log(`Error in deleteMessage: ${error}`);
+    });
   }
 
   toggleModal(id) {
